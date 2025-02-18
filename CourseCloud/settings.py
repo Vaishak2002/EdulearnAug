@@ -31,6 +31,16 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+AUTHENTICATION_BACKENDS = [
+    
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by email
+    'allauth.account.auth_backends.AuthenticationBackend',
+    
+ ]
+
 INSTALLED_APPS = [
     # 'unfold',
     'django.contrib.admin',
@@ -42,6 +52,16 @@ INSTALLED_APPS = [
     'instructor',
     'embed_video',
     'student',
+    # social authentication
+    'django.contrib.sites',
+
+    'allauth',
+    'allauth.account',
+
+    'allauth.socialaccount',
+
+    'allauth.socialaccount.providers.google',
+
 
 ]
 
@@ -52,6 +72,9 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    # Add the account middleware:
+    "allauth.account.middleware.AccountMiddleware",
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
    
 ]
@@ -137,3 +160,26 @@ AUTH_USER_MODEL = 'instructor.User'
 #     "SITE_HEADER": "Ajay Rajendran",
 #     "SITE_URL": "/admin/",  # Change if needed
 # }
+from decouple import config
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': config("client_id"),
+            'secret': config("secret"),
+            
+        }
+    }
+}
+
+SITE_ID=1
+
+LOGIN_REDIRECT_URL="student-index"
+
+LOGIN_URL="student-signin"
+
+SOCIALACCOUNT_LOGIN_ON_GET=True
